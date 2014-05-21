@@ -12,6 +12,8 @@ describe "Authentication" do
 
       it { should have_title('Sign in') }
       it { should have_selector('div.alert.alert-error') }
+      # it { should_not have_link('Profile',     href: user_url) }
+      # it { should_not have_link('Settings',    href: edit_user_path) }
 
       describe "after visiting another page" do
         before { click_link "Home" }
@@ -76,6 +78,19 @@ describe "Authentication" do
         end
       end
 
+      describe "in the Microposts controller" do
+
+        describe "submitting to the create action" do
+          before { post microposts_path }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+
+        describe "submitting to the destroy action" do
+          before { delete micropost_path(FactoryGirl.create(:micropost)) }
+          specify { expect(response).to redirect_to(signin_path) }
+        end
+      end
+
       describe "as non-admin user" do
         let(:user) { FactoryGirl.create(:user) }
         let(:non_admin) { FactoryGirl.create(:user) }
@@ -87,6 +102,8 @@ describe "Authentication" do
           specify { expect(response).to redirect_to(root_url) }
         end
       end
+
+
     end
 
     describe "as wrong user" do
